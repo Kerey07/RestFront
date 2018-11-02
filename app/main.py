@@ -1,4 +1,5 @@
 import requests as rq
+import pandas as pd
 from app import config
 import sys
 import json
@@ -42,7 +43,7 @@ def register():
 
 
 def end():
-    rq.get(URL + "logout")
+    rq.get(URL + "/logout")
     print('До свидания!')
     sys.exit()
 
@@ -51,9 +52,41 @@ def my_accounts():
     get = rq.get(URL + "/accounts", cookies=cookie)
     code = get.status_code
     if code == 200:
-        # print("\n"*50, "Список ваших счетов")
+        print("\n"*50, "Список ваших счетов")
         payload = get.json()
-        print(json.dumps(payload, indent=4))
+        print(table(payload))
+        print("Введите b, чтобы вернуться в Главное меню\nВведите x для выхода")
+        action = input("Выберите действие:")
+        while action not in ["x", "b"]:
+            action = input('Попробуйте еще раз:')
+        if action == "x":
+            sys.exit()
+        elif action == "b":
+            menu()
+
+def history():
+    get = rq.get(URL + "/history", cookies=cookie)
+    payload = get.json()
+    print(table(payload))
+    print("Введите b, чтобы вернуться в Главное меню\nВведите x для выхода")
+    action = input("Выберите действие:")
+    while action not in ["x", "b"]:
+        action = input('Попробуйте еще раз:')
+    if action == "x":
+        sys.exit()
+    elif action == "b":
+        menu()
+
+def table(payload):
+    header = []
+    for i in range(len(payload)):
+        dictionary = payload[i]
+        for key in dictionary:
+            if key not in header:
+                header.append(key)
+    print(header)
+    table = pd.DataFrame(payload)
+    return table
 
 
 def menu():
@@ -69,9 +102,8 @@ def menu():
         operations()
     elif action == "3":
         history()
-    else:
+    elif action == "4":
         end()
-
 
 
 def entrance():
