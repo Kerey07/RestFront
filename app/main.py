@@ -76,7 +76,6 @@ def history():
 
 
 def operation_rq(**payload):
-    print(payload)
     post = rq.post(URL+'/operations', cookies=cookie, json=payload)
     message = post.json()
     print(message["message"])
@@ -112,7 +111,7 @@ def operations():
         user_account = input("Введите номер своего счета:")
         recipient = input("Введите счет получателя:")
         value = input("Введите сумму:")
-        operation_rq(user_account=user_account, recipient=recipient, operation_type=operation_type, value=value)
+        operation_rq(user_account=user_account, recipient_account=recipient, operation_type=operation_type, value=value)
     elif action == "4":
         operation_type = "CREATE"
         value = input("Введите сумму:")
@@ -120,14 +119,16 @@ def operations():
 
 
 def table(payload):
-    header = []
-    for i in range(len(payload)):
-        dictionary = payload[i]
-        for key in dictionary:
-            if key not in header:
-                header.append(key)
-    table = pd.DataFrame(payload)
-    return table
+    # header = []
+    # for i in range(len(payload)):
+    #     dictionary = payload[i]
+    #     for key in dictionary:
+    #         if key not in header:
+    #             header.append(key)
+    # json = pd.read_json(payload)
+    # ts = pd.to_datetime(df['timestamp'])
+    df = pd.DataFrame(payload, columms='account')
+    return df
 
 
 def menu():
