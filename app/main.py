@@ -62,7 +62,7 @@ def my_accounts():
     if code == 200:
         print("\n" * 50, "Список ваших счетов")
         payload = get.json()
-        print(table(payload))
+        print(table(payload, 'accounts'))
         print("Введите b, чтобы вернуться в Главное меню\nВведите x для выхода")
         ender()
 
@@ -70,7 +70,8 @@ def my_accounts():
 def history():
     get = rq.get(URL + "/history", cookies=cookie)
     payload = get.json()
-    print(table(payload))
+    print("\n" * 50, "История ваших операций")
+    print(table(payload, 'history'))
     print("Введите b, чтобы вернуться в Главное меню\nВведите x для выхода")
     ender()
 
@@ -81,7 +82,6 @@ def operation_rq(**payload):
     print(message["message"])
     print("Введите b, чтобы вернуться в Главное меню\nВведите x для выхода")
     ender()
-
 
 
 def operations():
@@ -118,17 +118,19 @@ def operations():
         operation_rq(operation_type=operation_type, value=value)
 
 
-def table(payload):
-    # header = []
-    # for i in range(len(payload)):
-    #     dictionary = payload[i]
-    #     for key in dictionary:
-    #         if key not in header:
-    #             header.append(key)
-    # #json = pd.read_json(payload)
-    # ts = pd.to_datetime(df['timestamp'])
-    df = pd.DataFrame(payload, columms='account')
-    return df
+def table(payload, type):
+    df = pd.DataFrame(payload)
+    pd.set_option('display.width', None)
+    pd.set_option('display.max_rows', None)
+    if type == 'history':
+        df['timestamp'] = pd.to_datetime(df['timestamp'])
+        df['timestamp'] = df['timestamp'].dt.strftime('%Y-%m-%d %H:%M:%S')
+        df = df[['account', 'recipient', 'type', 'value', 'timestamp']]
+        df.columns = ['Номер счета', 'Счет-получатель', 'Тип операции', 'Сумма операции', 'Время']
+        return df
+    else:
+        df.columns = ['Номер счета', 'Балланс']
+        return df
 
 
 def menu():
