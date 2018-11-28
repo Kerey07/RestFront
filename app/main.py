@@ -127,6 +127,7 @@ def table(payload, type):
     df = pd.DataFrame(payload)
     pd.set_option('display.width', None)
     pd.set_option('display.max_rows', None)
+    df = df.fillna('')
     if type == 'history':
         df['timestamp'] = pd.to_datetime(df['timestamp'])
         df['timestamp'] = df['timestamp'].dt.strftime('%Y-%m-%d %H:%M:%S')
