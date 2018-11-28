@@ -1,7 +1,9 @@
-import requests as rq
-import pandas as pd
-from app import config
 import sys
+
+import pandas as pd
+import requests as rq
+
+from app import config
 
 URL = config.URL
 
@@ -59,11 +61,14 @@ def end():
 def my_accounts():
     get = rq.get(URL + "/accounts", cookies=cookie)
     code = get.status_code
+    payload = get.json()
     if code == 200:
         print("\n" * 50, "Список ваших счетов")
-        payload = get.json()
         print(table(payload, 'accounts'))
         print("Введите b, чтобы вернуться в Главное меню\nВведите x для выхода")
+        ender()
+    else:
+        print(payload["message"])
         ender()
 
 
